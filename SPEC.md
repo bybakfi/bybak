@@ -30,3 +30,10 @@ Every completed buyback emits an `Attestation` account containing:
 - `completed_at_slot: u64`
 
 The registry indexes attestations by protocol and by time.
+
+## 3. Compliance
+
+A protocol is compliant when the above interfaces are implemented and its
+executions consistently emit attestations that verify against on-chain state.
+
+The specification, execution engine, and registry are versioned together.
