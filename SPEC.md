@@ -1,7 +1,7 @@
-# Buyback Standard (draft)
+# Bybak Standard (draft)
 
 This document describes the interfaces a Solana program must implement to be
-considered a compliant buyback source.
+considered a Bybak-compliant buyback source.
 
 ## 1. Buyback trigger
 
@@ -29,11 +29,11 @@ Every completed buyback emits an `Attestation` account containing:
 - `destination_split: DestinationSplit`
 - `completed_at_slot: u64`
 
-The registry indexes attestations by protocol and by time.
+The Buyback Registry indexes attestations by protocol and by time.
 
 ## 3. Compliance
 
-A protocol is compliant when the above interfaces are implemented and its
+A protocol is Bybak-compliant when the above interfaces are implemented and its
 executions consistently emit attestations that verify against on-chain state.
 
 The specification, execution engine, and registry are versioned together.
