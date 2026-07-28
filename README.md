@@ -13,6 +13,7 @@
   <a href="https://bybak.fi"><img src="https://img.shields.io/badge/site-bybak.fi-E9A94E?style=for-the-badge" alt="Site"/></a>
   <a href="https://x.com/bybak_fi"><img src="https://img.shields.io/badge/X-%40bybak__fi-000000?style=for-the-badge&logo=x&logoColor=white" alt="X"/></a>
   <a href="https://github.com/bybakfi"><img src="https://img.shields.io/badge/org-bybakfi-181717?style=for-the-badge&logo=github&logoColor=white" alt="Organization"/></a>
+  <a href="https://explorer.solana.com/address/8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj?cluster=devnet"><img src="https://img.shields.io/badge/program-8n1B...TRrj-C79A4B?style=for-the-badge" alt="Devnet program"/></a>
 </p>
 
 <p align="center">
@@ -57,9 +58,8 @@ Three things follow from taking that seriously.
 - **Feed.** A completed return is published in one schema, so two protocols'
   records can sit next to each other and be read at a glance.
 
-This repository holds the specification draft. The reference implementation is an
-Anchor program deployed to Solana devnet, and its interface, account model, and
-enforced invariants are documented below against a program id anyone can inspect.
+This repository holds the specification draft and the reference Anchor program that
+implements it, deployed to Solana devnet against a program id anyone can inspect.
 What the standard costs is nothing. The schema is public and stays public, and
 implementing it requires no permission and no relationship with anyone.
 
@@ -341,12 +341,48 @@ anchor       0.31.1
 spec version 1
 ```
 
-The account is executable on devnet and can be inspected without any cooperation from
-this repository.
+Explorer:
+[`8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj`](https://explorer.solana.com/address/8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj?cluster=devnet)
+
+The account is executable on devnet and the IDL is published on chain, so the interface
+can be checked without any cooperation from this repository.
 
 ```bash
 solana program show 8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj \
   --url https://api.devnet.solana.com
+
+anchor idl fetch 8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj \
+  --provider.cluster devnet
+```
+
+Mainnet deployment is prepared but has not been executed. `anchor/scripts/deploy-mainnet.sh`
+gates it behind a keypair identity check, a program id match, a balance floor, and a
+typed confirmation. Until it is deliberately run, the mainnet program id resolves to
+nothing.
+
+Building and running the suite locally:
+
+```bash
+cd anchor
+anchor build
+anchor test --provider.cluster localnet
+```
+
+## Repository layout
+
+```
+bybak/
+  SPEC.md                        specification draft
+  anchor/
+    Anchor.toml                  workspace config, devnet provider
+    Cargo.toml                   Rust workspace, overflow-checks on release
+    programs/bybak/src/lib.rs    instructions, accounts, events, errors
+    tests/bybak.js               localnet suite covering the enforced invariants
+    idl/bybak.json               generated interface description
+    scripts/devnet-sanity.js     end to end devnet run, asserts the attestation
+    scripts/deploy-mainnet.sh    gated mainnet deploy, not yet executed
+    scripts/safe_solana_tx.sh    keypair and cluster gate for spending commands
+  LICENSE                        MIT
 ```
 
 ## Status
@@ -359,7 +395,8 @@ starts.
 | --- | --- |
 | Specification | Draft, published in `SPEC.md` |
 | Reference program | Anchor 0.31.1, deployed to devnet |
-| Program source | Not yet published in this repository |
+| Program source | Published in `anchor/` |
+| On-chain IDL | Published on devnet |
 | Mainnet program | Not deployed |
 | Certified protocols | None. There is no certification mechanism to certify with |
 | Cross protocol feed | Not built |
