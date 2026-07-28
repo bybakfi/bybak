@@ -57,9 +57,11 @@ Three things follow from taking that seriously.
 - **Feed.** A completed return is published in one schema, so two protocols'
   records can sit next to each other and be read at a glance.
 
-This repository holds the specification draft and the reference Anchor program that
-implements it. What the standard costs is nothing. The schema is public and stays
-public, and implementing it requires no permission and no relationship with anyone.
+This repository holds the specification draft. The reference implementation is an
+Anchor program deployed to Solana devnet, and its interface, account model, and
+enforced invariants are documented below against a program id anyone can inspect.
+What the standard costs is nothing. The schema is public and stays public, and
+implementing it requires no permission and no relationship with anyone.
 
 ## The problem
 
@@ -357,6 +359,7 @@ starts.
 | --- | --- |
 | Specification | Draft, published in `SPEC.md` |
 | Reference program | Anchor 0.31.1, deployed to devnet |
+| Program source | Not yet published in this repository |
 | Mainnet program | Not deployed |
 | Certified protocols | None. There is no certification mechanism to certify with |
 | Cross protocol feed | Not built |
