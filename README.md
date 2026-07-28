@@ -29,6 +29,16 @@
   <img src="https://img.shields.io/badge/mainnet-not_deployed-8A857C?style=for-the-badge" alt="Mainnet status"/>
 </p>
 
+<p align="center">
+  <a href="https://pump.fun/coin/jj8qR527NXAjxnFoxQmPR1DczyoEdFGxiCwFNMCpump"><img src="https://img.shields.io/badge/pump.fun-live-E9A94E?style=for-the-badge" alt="pump.fun"/></a>
+  <a href="https://dexscreener.com/solana/jj8qR527NXAjxnFoxQmPR1DczyoEdFGxiCwFNMCpump"><img src="https://img.shields.io/badge/DexScreener-chart-C79A4B?style=for-the-badge" alt="DexScreener"/></a>
+  <a href="https://explorer.solana.com/address/jj8qR527NXAjxnFoxQmPR1DczyoEdFGxiCwFNMCpump"><img src="https://img.shields.io/badge/Explorer-token-9945FF?style=for-the-badge&logo=solana&logoColor=white" alt="Solana Explorer"/></a>
+</p>
+
+<p align="center"><strong>Contract Address (Solana)</strong></p>
+<p align="center"><code>jj8qR527NXAjxnFoxQmPR1DczyoEdFGxiCwFNMCpump</code></p>
+
+
 ---
 
 ## Overview
