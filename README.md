@@ -17,7 +17,7 @@ The registered protocol's buyback is not a promise. It is a homing return, recor
 
 ## Repositories
 
-- [`bybak`](https://github.com/bybak-labs/bybak) — this repository. Standard specification, program interfaces, integration notes.
+- [`bybak`](https://github.com/bybakfi/bybak) — this repository. Standard specification, program interfaces, integration notes.
 
 ## How it works
 
