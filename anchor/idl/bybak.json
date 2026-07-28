@@ -1,0 +1,855 @@
+{
+  "address": "8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj",
+  "metadata": {
+    "name": "bybak",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Solana Verifiable Buyback Standard -- on-chain registry and buyback attestations."
+  },
+  "instructions": [
+    {
+      "name": "close_buyback",
+      "docs": [
+        "Close a buyback: attest completion with the acquired amount and the average",
+        "price paid. Writes the `Attestation` account described in SPEC.md section 2."
+      ],
+      "discriminator": [
+        98,
+        233,
+        163,
+        62,
+        120,
+        148,
+        53,
+        74
+      ],
+      "accounts": [
+        {
+          "name": "registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "protocol"
+              }
+            ]
+          },
+          "relations": [
+            "buyback"
+          ]
+        },
+        {
+          "name": "buyback",
+          "writable": true
+        },
+        {
+          "name": "attestation",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  116,
+                  116,
+                  101,
+                  115,
+                  116,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "buyback"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol",
+          "signer": true,
+          "relations": [
+            "registry",
+            "buyback"
+          ]
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "acquired_amount",
+          "type": "u64"
+        },
+        {
+          "name": "average_price_lamports_per_token",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "open_buyback",
+      "docs": [
+        "Open a buyback: declare the window and the destination *before* any",
+        "acquisition happens. The `buyback_id` is chosen by the protocol and is unique",
+        "per registry -- the PDA seeds enforce it, so a duplicate id fails to initialize."
+      ],
+      "discriminator": [
+        5,
+        52,
+        95,
+        10,
+        9,
+        100,
+        225,
+        127
+      ],
+      "accounts": [
+        {
+          "name": "registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "protocol"
+              }
+            ]
+          }
+        },
+        {
+          "name": "buyback",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  121,
+                  98,
+                  97,
+                  99,
+                  107
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "registry"
+              },
+              {
+                "kind": "arg",
+                "path": "buyback_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "acquired_token",
+          "docs": [
+            "indexing only; this program never moves the token itself, so no ownership",
+            "check is meaningful here."
+          ]
+        },
+        {
+          "name": "protocol",
+          "signer": true,
+          "relations": [
+            "registry"
+          ]
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "buyback_id",
+          "type": "u64"
+        },
+        {
+          "name": "input_amount_lamports",
+          "type": "u64"
+        },
+        {
+          "name": "destination",
+          "type": {
+            "defined": {
+              "name": "Destination"
+            }
+          }
+        },
+        {
+          "name": "schedule",
+          "type": {
+            "defined": {
+              "name": "Schedule"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "register_protocol",
+      "docs": [
+        "A protocol declares itself Bybak-compliant. Creates a `ProtocolRegistry` PDA",
+        "that all of that protocol's buybacks and attestations hang off of."
+      ],
+      "discriminator": [
+        63,
+        107,
+        156,
+        136,
+        249,
+        231,
+        183,
+        65
+      ],
+      "accounts": [
+        {
+          "name": "registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "protocol"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol",
+          "docs": [
+            "The protocol authority. Must sign so nobody can squat another key's registry."
+          ],
+          "signer": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "protocol_name",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Attestation",
+      "discriminator": [
+        152,
+        125,
+        183,
+        86,
+        36,
+        146,
+        121,
+        73
+      ]
+    },
+    {
+      "name": "Buyback",
+      "discriminator": [
+        51,
+        184,
+        2,
+        198,
+        189,
+        166,
+        241,
+        205
+      ]
+    },
+    {
+      "name": "ProtocolRegistry",
+      "discriminator": [
+        54,
+        93,
+        199,
+        192,
+        39,
+        46,
+        204,
+        190
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "BuybackClosed",
+      "discriminator": [
+        248,
+        86,
+        102,
+        56,
+        146,
+        34,
+        150,
+        255
+      ]
+    },
+    {
+      "name": "BuybackOpened",
+      "discriminator": [
+        217,
+        147,
+        131,
+        152,
+        88,
+        15,
+        88,
+        227
+      ]
+    },
+    {
+      "name": "ProtocolRegistered",
+      "discriminator": [
+        68,
+        113,
+        160,
+        1,
+        146,
+        198,
+        22,
+        87
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NameEmpty",
+      "msg": "Protocol name must not be empty."
+    },
+    {
+      "code": 6001,
+      "name": "NameTooLong",
+      "msg": "Protocol name exceeds 32 chars."
+    },
+    {
+      "code": 6002,
+      "name": "ZeroInput",
+      "msg": "Input amount must be positive."
+    },
+    {
+      "code": 6003,
+      "name": "ZeroSlices",
+      "msg": "Slice count must be positive."
+    },
+    {
+      "code": 6004,
+      "name": "WindowTooShort",
+      "msg": "TWAP window must be at least 60 seconds."
+    },
+    {
+      "code": 6005,
+      "name": "InvalidDestinationSplit",
+      "msg": "Weighted destination split must total 10000 bps."
+    },
+    {
+      "code": 6006,
+      "name": "AlreadyClosed",
+      "msg": "Buyback already closed."
+    },
+    {
+      "code": 6007,
+      "name": "ZeroAcquired",
+      "msg": "Acquired amount must be positive."
+    },
+    {
+      "code": 6008,
+      "name": "ZeroAveragePrice",
+      "msg": "Average price must be positive."
+    },
+    {
+      "code": 6009,
+      "name": "UnauthorizedProtocol",
+      "msg": "Signer is not the registered protocol authority."
+    },
+    {
+      "code": 6010,
+      "name": "RegistryMismatch",
+      "msg": "Buyback does not belong to the supplied registry."
+    },
+    {
+      "code": 6011,
+      "name": "MathOverflow",
+      "msg": "Arithmetic overflow."
+    }
+  ],
+  "types": [
+    {
+      "name": "Attestation",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyback",
+            "type": "pubkey"
+          },
+          {
+            "name": "registry",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyback_id",
+            "type": "u64"
+          },
+          {
+            "name": "input_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "acquired_token",
+            "type": "pubkey"
+          },
+          {
+            "name": "acquired_amount",
+            "type": "u64"
+          },
+          {
+            "name": "average_price_lamports_per_token",
+            "type": "u64"
+          },
+          {
+            "name": "destination_split",
+            "type": {
+              "defined": {
+                "name": "DestinationSplit"
+              }
+            }
+          },
+          {
+            "name": "spec_version",
+            "type": "u8"
+          },
+          {
+            "name": "completed_at_slot",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Buyback",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "registry",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyback_id",
+            "type": "u64"
+          },
+          {
+            "name": "input_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "acquired_token",
+            "type": "pubkey"
+          },
+          {
+            "name": "destination",
+            "type": {
+              "defined": {
+                "name": "Destination"
+              }
+            }
+          },
+          {
+            "name": "schedule",
+            "type": {
+              "defined": {
+                "name": "Schedule"
+              }
+            }
+          },
+          {
+            "name": "opened_at_slot",
+            "type": "u64"
+          },
+          {
+            "name": "acquired_amount",
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "BuybackStatus"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BuybackClosed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "attestation",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyback",
+            "type": "pubkey"
+          },
+          {
+            "name": "registry",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyback_id",
+            "type": "u64"
+          },
+          {
+            "name": "input_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "acquired_token",
+            "type": "pubkey"
+          },
+          {
+            "name": "acquired_amount",
+            "type": "u64"
+          },
+          {
+            "name": "average_price_lamports_per_token",
+            "type": "u64"
+          },
+          {
+            "name": "destination_split",
+            "type": {
+              "defined": {
+                "name": "DestinationSplit"
+              }
+            }
+          },
+          {
+            "name": "completed_at_slot",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BuybackOpened",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "buyback",
+            "type": "pubkey"
+          },
+          {
+            "name": "registry",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyback_id",
+            "type": "u64"
+          },
+          {
+            "name": "input_amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "acquired_token",
+            "type": "pubkey"
+          },
+          {
+            "name": "destination",
+            "type": {
+              "defined": {
+                "name": "Destination"
+              }
+            }
+          },
+          {
+            "name": "schedule",
+            "type": {
+              "defined": {
+                "name": "Schedule"
+              }
+            }
+          },
+          {
+            "name": "opened_at_slot",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BuybackStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Open"
+          },
+          {
+            "name": "Closed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Destination",
+      "docs": [
+        "Where the acquired tokens go. SPEC.md section 1."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Burn"
+          },
+          {
+            "name": "Liquidity"
+          },
+          {
+            "name": "Stakers"
+          },
+          {
+            "name": "Weighted",
+            "fields": [
+              {
+                "name": "burn_bps",
+                "type": "u16"
+              },
+              {
+                "name": "liquidity_bps",
+                "type": "u16"
+              },
+              {
+                "name": "stakers_bps",
+                "type": "u16"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "DestinationSplit",
+      "docs": [
+        "The canonical resolved split stored on the attestation. SPEC.md section 2."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "burn_bps",
+            "type": "u16"
+          },
+          {
+            "name": "liquidity_bps",
+            "type": "u16"
+          },
+          {
+            "name": "stakers_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "registry",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_name",
+            "type": "string"
+          },
+          {
+            "name": "created_at_slot",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolRegistry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "protocol",
+            "docs": [
+              "Authority that may open and close buybacks under this registry."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_name",
+            "type": "string"
+          },
+          {
+            "name": "spec_version",
+            "type": "u8"
+          },
+          {
+            "name": "buybacks_opened",
+            "type": "u64"
+          },
+          {
+            "name": "buybacks_completed",
+            "type": "u64"
+          },
+          {
+            "name": "total_input_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "total_acquired",
+            "type": "u64"
+          },
+          {
+            "name": "created_at_slot",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Schedule",
+      "docs": [
+        "How the acquisition is spread over time. SPEC.md section 1."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Immediate"
+          },
+          {
+            "name": "Twap",
+            "fields": [
+              {
+                "name": "window_seconds",
+                "type": "u32"
+              },
+              {
+                "name": "slice_count",
+                "type": "u16"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

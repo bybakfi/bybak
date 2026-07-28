@@ -1,0 +1,23 @@
+[package]
+name = "bybak"
+version = "0.1.0"
+description = "Solana Verifiable Buyback Standard -- on-chain registry and buyback attestations."
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "bybak"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+
+[dependencies]
+anchor-lang = "0.31.1"
+

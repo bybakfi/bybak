@@ -1,0 +1,31 @@
+[toolchain]
+anchor_version = "0.31.1"
+package_manager = "yarn"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+bybak = "8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj"
+
+[programs.devnet]
+bybak = "8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj"
+
+# Mainnet reuses the same program id (same program keypair).
+# Deploying there is a deliberate manual step -- see scripts/deploy-mainnet.sh.
+[programs.mainnet]
+bybak = "8n1BA3TB1tfYzU75GR9CDePXZEeoXXEYQVEs3QqwTRrj"
+
+[registry]
+url = "https://api.apr.dev"
+
+# Wallet is pinned to a dedicated Bybak deploy keypair on purpose.
+# Do not point this at ~/.config/solana/id.json: that default is shared with every
+# other tool on the machine, which makes it the wrong key to hand a deploy.
+[provider]
+cluster = "devnet"
+wallet = "~/bybak-deploy.json"
+
+[scripts]
+test = "yarn run mocha -t 1000000 tests/"
